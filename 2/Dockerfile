@@ -1,6 +1,7 @@
 FROM centos:8
 MAINTAINER mail@knazarov.com
 
+
 RUN groupadd tarantool \
     && adduser -g tarantool tarantool
 
@@ -10,8 +11,15 @@ RUN yum -y install epel-release && \
     yum -y clean all
 
 
-ENV TARANTOOL_VERSION 2.1.2
 ENV TARANTOOL_DOWNLOAD_URL https://github.com/tarantool/tarantool.git
+ENV CARTRIDGE_DOWNLOAD_URL https://github.com/tarantool/cartridge.git
+ENV CARTRIDGE_CLI_DOWNLOAD_URL https://github.com/tarantool/cartridge-cli.git
+
+
+ENV TARANTOOL_VERSION 2.1.2
+ENV CARTRIDGE_VERSION 1.0.0
+ENV CARTRIDGE_CLI_VERSION 1.0.0
+
 
 RUN set -x \
     && yum -y install \
@@ -105,19 +113,13 @@ RUN set -x \
         libicu-devel \
     && rm -rf /var/cache/yum
 
-#     && rpm -qa | grep devel | grep -v glibc | grep -v xcrypt | xargs yum -y remove \
 
-ENV CARTRIDGE_VERSION 1.0.0
-ENV CARTRIDGE_CLI_VERSION 1.0.0
-
-RUN set -x \
-    && : "---------- cartridge cli ----------" \
+ RUN set -x \
+     && : "---------- cartridge cli ----------" \
     && (cd / && tarantoolctl rocks install cartridge-cli "$CARTRIDGE_CLI_VERSION-1") \
-    && (cd / && tarantoolctl rocks install cartridge "$CARTRIDGE_VERSION-1") \
-    && ln -s /.rocks/bin/cartridge /usr/bin/cartridge
-
-
-
+    && ln -s /.rocks/bin/cartridge /usr/bin/cartridge \
+    && : "---------- cartridge ----------" \
+    && (cd / && tarantoolctl rocks install cartridge "$CARTRIDGE_VERSION-1")
 
 
 VOLUME /var/lib/tarantool
