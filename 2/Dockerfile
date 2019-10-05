@@ -108,10 +108,11 @@ RUN set -x \
 #     && rpm -qa | grep devel | grep -v glibc | grep -v xcrypt | xargs yum -y remove \
 
 ENV CARTRIDGE_VERSION 1.0.0
+ENV CARTRIDGE_CLI_VERSION 1.0.0
 
 RUN set -x \
     && : "---------- cartridge cli ----------" \
-    && (cd / && tarantoolctl rocks install cartridge-cli) \
+    && (cd / && tarantoolctl rocks install cartridge-cli "$CARTRIDGE_CLI_VERSION-1") \
     && (cd / && tarantoolctl rocks install cartridge "$CARTRIDGE_VERSION-1") \
     && ln -s /.rocks/bin/cartridge /usr/bin/cartridge
 
