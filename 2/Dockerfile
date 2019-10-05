@@ -16,8 +16,8 @@ ENV CARTRIDGE_DOWNLOAD_URL https://github.com/tarantool/cartridge.git
 ENV CARTRIDGE_CLI_DOWNLOAD_URL https://github.com/tarantool/cartridge-cli.git
 
 
-ENV TARANTOOL_VERSION 2.1.2
-ENV CARTRIDGE_VERSION 1.0.0
+ENV TARANTOOL_VERSION 2.3.0
+ENV CARTRIDGE_VERSION 1.1.0
 ENV CARTRIDGE_CLI_VERSION 1.0.0
 
 
@@ -121,6 +121,38 @@ RUN set -x \
     && : "---------- cartridge ----------" \
     && (cd / && tarantoolctl rocks install cartridge "$CARTRIDGE_VERSION-1")
 
+RUN set -x \
+    && : "---------- gosu ----------" \
+    && gpg --keyserver pool.sks-keyservers.net --recv-keys \
+       B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && curl -o /usr/local/bin/gosu -SL \
+       "https://github.com/tianon/gosu/releases/download/1.2/gosu-amd64" \
+    && curl -o /usr/local/bin/gosu.asc -SL \
+       "https://github.com/tianon/gosu/releases/download/1.2/gosu-amd64.asc" \
+    && gpg --verify /usr/local/bin/gosu.asc \
+    && rm /usr/local/bin/gosu.asc \
+    && rm -rf /root/.gnupg/ \
+    && chmod +x /usr/local/bin/gosu
+
+RUN mkdir /opt/cartridge-init
+COPY init.lua /opt/cartridge-init
+COPY cartridge-init-scm-1.rockspec /opt/cartridge-init
+COPY docker-entrypoint.sh /usr/local/bin/
+
+RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+RUN mkdir -p /var/lib/tarantool \
+    && chown tarantool:tarantool /var/lib/tarantool \
+    && mkdir -p /opt/tarantool \
+    && mkdir -p /var/run/tarantool \
+    && chown tarantool:tarantool /var/run/tarantool
+
 
 VOLUME /var/lib/tarantool
 WORKDIR /opt/tarantool
+
+ENV TARANTOOL_WORK_DIR=/var/lib/tarantool \
+    TARANTOOL_WORKDIR=/var/lib/tarantool
+
+CMD [ "tarantool", "/opt/tarantool/init.lua" ]
