@@ -59,4 +59,12 @@ for version in "${versions[@]}"; do
         -e 's/^\(ENV CARTRIDGE_CLI_VERSION\) .*/\1 '"$cartridgeCliVersion"'/' \
            "$version/Dockerfile.template" > "$version/Dockerfile"
 
+    cp .travis.yml .travis.yml.template
+
+    sed -e 's/^\(  - VERSION='"$version"' FULL_VERSION=\).*/\1'"$fullVersion"'/' \
+           ".travis.yml.template" > ".travis.yml"
+
+    rm -f .travis.yml.template
+    rm -f "$version/Dockerfile.template"
+
 done

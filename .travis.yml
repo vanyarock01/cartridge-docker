@@ -1,0 +1,13 @@
+language: bash
+services: docker
+
+env:
+  - VERSION=2 FULL_VERSION=2.1.0
+
+before_script:
+  - cd "$VERSION"
+
+script:
+  - |
+    (
+    )
