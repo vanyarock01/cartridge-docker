@@ -2,8 +2,8 @@
 set -eu
 
 declare -A aliases=(
-    [2]='2 latest'
-    [1]='1'
+    [2]='latest'
+    [1]=''
 )
 
 self="$(basename "$BASH_SOURCE")"
@@ -39,8 +39,9 @@ dirCommit() {
 
 cat <<-EOH
 # this file is generated via https://github.com/tarantool/cartridge-docker/blob/$(fileCommit "$self")/$self
+
 Maintainers: Konstantin Nazarov <mail@knazarov.com> (@knazarov)
-gGitRepo: https://github.com/tarantool/cartridge-docker.git
+GitRepo: https://github.com/tarantool/cartridge-docker.git
 EOH
 
 # prints "$2$1$3$1...$N"
@@ -71,9 +72,10 @@ for version in "${versions[@]}"; do
 
     echo
     cat <<-EOE
-        Tags: $(join ', ' "${versionAliases[@]}")
-        GitCommit: $commit
-        Directory: $version
+Tags: $(join ', ' "${versionAliases[@]}")
+Architectures: amd64
+GitCommit: $commit
+Directory: $version
 EOE
 
     for variant in alpine; do
@@ -86,9 +88,10 @@ EOE
 
         echo
         cat <<-EOE
-            Tags: $(join ', ' "${variantAliases[@]}")
-            GitCommit: $commit
-            Directory: $version/$variant
+Tags: $(join ', ' "${variantAliases[@]}")
+Architectures: amd64
+GitCommit: $commit
+Directory: $version/$variant
 EOE
     done
 done
