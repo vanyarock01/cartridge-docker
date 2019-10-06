@@ -38,9 +38,9 @@ dirCommit() {
 }
 
 cat <<-EOH
-# this file is generated via https://github.com/docker-library/cartridge/blob/$(fileCommit "$self")/$self
+# this file is generated via https://github.com/tarantool/cartridge-docker/blob/$(fileCommit "$self")/$self
 Maintainers: Konstantin Nazarov <mail@knazarov.com>
-GitRepo: https://github.com/docker-library/cartridge.git
+gGitRepo: https://github.com/tarantool/cartridge-docker.git
 EOH
 
 # prints "$2$1$3$1...$N"
