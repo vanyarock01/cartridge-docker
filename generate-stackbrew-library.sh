@@ -39,7 +39,7 @@ dirCommit() {
 
 cat <<-EOH
 # this file is generated via https://github.com/tarantool/cartridge-docker/blob/$(fileCommit "$self")/$self
-Maintainers: Konstantin Nazarov <mail@knazarov.com>
+Maintainers: Konstantin Nazarov <mail@knazarov.com> (@knazarov)
 gGitRepo: https://github.com/tarantool/cartridge-docker.git
 EOH
 
