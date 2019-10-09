@@ -1,13 +1,20 @@
 language: bash
 services: docker
+dist: xenial
 
-env:
-  - VERSION=2 FULL_VERSION=2.1.0
+before_install:
+  - wget https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
+  - chmod +x bashbrew-amd64
 
-before_script:
-  - cd "$VERSION"
+build:
+  - ./generate-stackbrew-library.sh > cartridge
+  - ./bashbrew-amd64 build ./cartridge
 
-script:
-  - |
-    (
-    )
+push:
+  provider: script
+  script:
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - ./bashbrew-amd64 tag --target-namespace tarantool ./cartridge
+    - ./bashbrew-amd64 --namespace tarantool push ./cartridge
+  on:
+    branch: master
