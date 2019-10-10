@@ -2,15 +2,15 @@ language: bash
 services: docker
 dist: xenial
 
-before_install:
+before_script:
   - wget https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
   - chmod +x bashbrew-amd64
 
-build:
+script:
   - ./generate-stackbrew-library.sh > cartridge
   - ./bashbrew-amd64 build ./cartridge
 
-push:
+deploy:
   provider: script
   script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
