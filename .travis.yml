@@ -18,7 +18,7 @@ jobs:
         directories:
         - $BIN_DIR
     - stage: push
-      if: branch = master
+      if: (branch = master) AND NOT (type = pull_request)
       script:
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - ./bashbrew-amd64 tag --target-namespace tarantool ./cartridge
