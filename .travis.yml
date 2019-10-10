@@ -20,10 +20,9 @@ jobs:
     - stage: push
       if: branch = master
       script:
-        - git status
-        # - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        # - ./bashbrew-amd64 tag --target-namespace tarantool ./cartridge
-        # - ./bashbrew-amd64 --namespace tarantool push ./cartridge
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - ./bashbrew-amd64 tag --target-namespace tarantool ./cartridge
+        - ./bashbrew-amd64 --namespace tarantool push ./cartridge
 
 
 
