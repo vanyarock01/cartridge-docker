@@ -1,9 +1,15 @@
 language: bash
 services: docker
 dist: xenial
+
 env:
   global:
-    - BIN_DIR=/home/travis/bashbrew/
+    - BIN_DIR=$HOME/bashbrew/.cache/
+
+cache:
+  directories:
+  - $BIN_DIR
+
 jobs:
   include:
     - stage: build
@@ -14,9 +20,7 @@ jobs:
       script:
         - ./generate-stackbrew-library.sh > cartridge
         - bashbrew-amd64 build ./cartridge
-      cache:
-        directories:
-        - $BIN_DIR
+
     - stage: push
       if: (branch = master) AND NOT (type = pull_request)
       script:
