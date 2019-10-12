@@ -4,33 +4,32 @@ dist: xenial
 
 env:
   global:
-    - BIN_DIR=$HOME/bashbrew_bin/.cache/
+    - CACHE_DIR=$HOME/cache_dir/
 
 cache:
   directories:
-  - $BIN_DIR
-  - $HOME/user/.cache/bashbrew
-  - $HOME/user/docker/official-images/library
+  - $CACHE_DIR
+  - $HOME/user/.cache/bashbrew/
 
 jobs:
   include:
     - stage: build
       install:
-        - wget -P $BIN_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
-        - chmod +x $BIN_DIR/bashbrew-amd64
-        - export PATH=$PATH:$BIN_DIR
+        - wget -P $CACHE_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
+        - chmod +x $CACHE_DIR/bashbrew-amd64
+        - export PATH=$PATH:$CACHE_DIR
       script:
-        - ./generate-stackbrew-library.sh > cartridge
-        - bashbrew-amd64 build ./cartridge
+        - ./generate-stackbrew-library.sh > $CACHE_DIR/cartridge
+        - bashbrew-amd64 build $CACHE_DIR/cartridge
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
-        - export PATH=$PATH:$BIN_DIR
+        - export PATH=$PATH:$CACHE_DIR
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login -u "$MY_DOCKER_USERNAME" --password-stdin
-        - bashbrew-amd64 tag --target-namespace vanyarock01 ./cartridge
-        - bashbrew-amd64 --namespace vanyarock01 push ./cartridge
+        - bashbrew-amd64 tag --target-namespace vanyarock01 $CACHE_DIR/cartridge
+        - bashbrew-amd64 --namespace vanyarock01 push $CACHE_DIR/cartridge
 
 
 
