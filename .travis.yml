@@ -27,7 +27,7 @@ jobs:
       install:
         - export PATH=$PATH:$CACHE_DIR
       script:
-        - echo "$MY_DOCKER_PASSWORD" | docker login -u "$MY_DOCKER_USERNAME" --password-stdin
+        - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
         - bashbrew-amd64 tag --target-namespace vanyarock01 $CACHE_DIR/cartridge
         - bashbrew-amd64 --namespace vanyarock01 push $CACHE_DIR/cartridge
 
