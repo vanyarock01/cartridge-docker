@@ -4,11 +4,13 @@ dist: xenial
 
 env:
   global:
-    - BIN_DIR=$HOME/bashbrew/.cache/
+    - BIN_DIR=$HOME/bashbrew_bin/.cache/
 
 cache:
   directories:
   - $BIN_DIR
+  - $HOME/user/.cache/bashbrew
+  - $HOME/user/docker/official-images/library
 
 jobs:
   include:
