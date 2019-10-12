@@ -26,7 +26,7 @@ jobs:
       install:
         - export PATH=$PATH:$BIN_DIR
       script:
-        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - bashbrew-amd64 tag --target-namespace tarantool ./cartridge
         - bashbrew-amd64 --namespace tarantool push ./cartridge
 
