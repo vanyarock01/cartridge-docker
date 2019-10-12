@@ -2,19 +2,33 @@ language: bash
 services: docker
 dist: xenial
 
-before_script:
-  - wget https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
-  - chmod +x bashbrew-amd64
+env:
+  global:
+    - BIN_DIR=$HOME/bashbrew/.cache/
 
-script:
-  - ./generate-stackbrew-library.sh > cartridge
-  - ./bashbrew-amd64 build ./cartridge
+cache:
+  directories:
+  - $BIN_DIR
 
-deploy:
-  provider: script
-  script:
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    - ./bashbrew-amd64 tag --target-namespace tarantool ./cartridge
-    - ./bashbrew-amd64 --namespace tarantool push ./cartridge
-  on:
-    branch: master
+jobs:
+  include:
+    - stage: build
+      install:
+        - wget -P $BIN_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
+        - chmod +x $BIN_DIR/bashbrew-amd64
+        - export PATH=$PATH:$BIN_DIR
+      script:
+        - ./generate-stackbrew-library.sh > cartridge
+        - bashbrew-amd64 build ./cartridge
+
+    - stage: push
+      if: (branch = master) AND NOT (type = pull_request)
+      install:
+        - export PATH=$PATH:$BIN_DIR
+      script:
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - bashbrew-amd64 tag --target-namespace tarantool ./cartridge
+        - bashbrew-amd64 --namespace tarantool push ./cartridge
+
+
+
