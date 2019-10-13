@@ -10,8 +10,7 @@ cache:
   directories:
   - $CACHE_DIR
   - $HOME/.cache/bashbrew/
-  - /var/lib/docker/
-
+  - $HOME/docker/official-images/library
 jobs:
   include:
     - stage: build
