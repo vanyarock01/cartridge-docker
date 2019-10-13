@@ -9,7 +9,7 @@ env:
 cache:
   directories:
   - $CACHE_DIR
-  - home/user/.cache/bashbrew/
+  - /home/user/.cache/bashbrew/
   # - home/user/.config/bashbrew
 
 jobs:
