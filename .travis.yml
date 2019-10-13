@@ -9,8 +9,8 @@ env:
 cache:
   directories:
   - $CACHE_DIR
-  - /home/user/.cache/bashbrew/
-  # - home/user/.config/bashbrew
+  - $HOME/.cache/bashbrew/
+  - $PWD
 
 jobs:
   include:
@@ -20,8 +20,8 @@ jobs:
         - chmod +x $CACHE_DIR/bashbrew-amd64
         - export PATH=$PATH:$CACHE_DIR
       script:
-        - ./generate-stackbrew-library.sh > $CACHE_DIR/cartridge
-        - bashbrew-amd64 build $CACHE_DIR/cartridge
+        - ./generate-stackbrew-library.sh > ./cartridge
+        - bashbrew-amd64 build ./cartridge
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
@@ -29,8 +29,8 @@ jobs:
         - export PATH=$PATH:$CACHE_DIR
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
-        - bashbrew-amd64 tag --target-namespace vanyarock01 $CACHE_DIR/cartridge
-        - bashbrew-amd64 --namespace vanyarock01 push $CACHE_DIR/cartridge
+        - bashbrew-amd64 tag --target-namespace vanyarock01 ./cartridge
+        - bashbrew-amd64 --namespace vanyarock01 push ./cartridge
 
 
 
