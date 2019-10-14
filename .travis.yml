@@ -33,6 +33,7 @@ jobs:
       install:
         - export PATH=$PATH:$BIN_DIR
         - zcat $DOCKER_DIR/images_cache.tar.gz | docker import - bashbrew/cache
+        - bashbrew-amd64 build $BIN_DIR/cartridge
         - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
