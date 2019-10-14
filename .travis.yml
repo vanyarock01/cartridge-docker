@@ -32,7 +32,7 @@ jobs:
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
         - export PATH=$PATH:$BIN_DIR
-        - zcat $DOCKER_DIR/images_cache.tar.gz | docker load
+        - zcat $DOCKER_DIR/images_cache.tar.gz | docker import - bashbrew/cache
         - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
