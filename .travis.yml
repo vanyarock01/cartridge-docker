@@ -13,6 +13,7 @@ cache:
   directories:
   - $BIN_DIR
   - $DOCKER_DIR
+  - /var/lib/docker/
 
 jobs:
   include:
@@ -31,7 +32,7 @@ jobs:
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
         - export PATH=$PATH:$BIN_DIR
-        - if [[ -f $DOCKER_DIR/images_cache ]]; then docker load -i $DOCKER_DIR/images_cache; fi
+        - docker load -i $DOCKER_DIR/images_cache
         - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
