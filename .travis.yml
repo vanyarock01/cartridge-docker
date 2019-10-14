@@ -4,32 +4,42 @@ dist: xenial
 
 env:
   global:
-    - CACHE_DIR=$HOME/cache_dir/
+    - BIN_DIR=$HOME/bin_cache
+    - DOCKER_DIR=$HOME/docker_cache
+    - NAMESPACE=vanyarock01
 
 cache:
+  bundler: true
   directories:
-  - $CACHE_DIR
-  - $HOME/.cache/bashbrew/
-  - $HOME/docker/official-images/library
+  - $BIN_DIR
+  - $DOCKER_DIR
+
 jobs:
   include:
     - stage: build
       install:
-        - wget -P $CACHE_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
-        - chmod +x $CACHE_DIR/bashbrew-amd64
-        - export PATH=$PATH:$CACHE_DIR
+        - wget -P $BIN_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
+        - chmod +x $BIN_DIR/bashbrew-amd64
+        - export PATH=$PATH:$BIN_DIR
       script:
-        - ./generate-stackbrew-library.sh > $CACHE_DIR/cartridge
-        - bashbrew-amd64 build $CACHE_DIR/cartridge
+        - ./generate-stackbrew-library.sh > $BIN_DIR/cartridge
+        - bashbrew-amd64 build $BIN_DIR/cartridge
+        - mkdir -p $DOCKER_DIR
+        - |
+          docker save \
+            $(docker images | grep $NAMESPACE/cartridge | awk '{print $1 ":" $2}) | \
+            gzip -c > $DOCKER_DIR/images_cache
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
-        - export PATH=$PATH:$CACHE_DIR
+        - export PATH=$PATH:$BIN_DIR
+        - if [[ -f $DOCKER_DIR/images_cache ]]; then docker load -i $DOCKER_DIR/images_cache; fi
+        - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
-        - bashbrew-amd64 tag --target-namespace vanyarock01 $CACHE_DIR/cartridge
-        - bashbrew-amd64 --namespace vanyarock01 push $CACHE_DIR/cartridge
+        - bashbrew-amd64 tag --target-namespace $NAMESPACE $BIN_DIR/cartridge
+        - bashbrew-amd64 --namespace $NAMESPACE push $BIN_DIR/cartridge
 
 
 
