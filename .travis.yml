@@ -25,7 +25,7 @@ jobs:
         - ./generate-stackbrew-library.sh > $BIN_DIR/cartridge
         - bashbrew-amd64 build $BIN_DIR/cartridge
         - mkdir -p $DOCKER_DIR
-        - docker save $(docker images | grep $NAMESPACE/cartridge | awk '{print $1 ":" $2}) | gzip -c > $DOCKER_DIR/images_cache
+        - docker save $(docker images | grep $NAMESPACE/cartridge | awk '{print $1 ":" $2}') | gzip -c > $DOCKER_DIR/images_cache
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
