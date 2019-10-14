@@ -26,13 +26,13 @@ jobs:
         - ./generate-stackbrew-library.sh > $BIN_DIR/cartridge
         - bashbrew-amd64 build $BIN_DIR/cartridge
         - mkdir -p $DOCKER_DIR
-        - docker save $(docker images | grep $NAMESPACE/cartridge | awk '{print $1 ":" $2}') | gzip -2 > $DOCKER_DIR/images_cache.tar.gz
+        - docker save $(docker images | grep bashbrew/cache) | gzip -2 > $DOCKER_DIR/images_cache.tar.gz
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
         - export PATH=$PATH:$BIN_DIR
-        - docker import $DOCKER_DIR/images_cache.tar.gz
+        - zcat $DOCKER_DIR/images_cache.tar.gz | docker load
         - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
