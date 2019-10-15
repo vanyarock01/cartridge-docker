@@ -3,7 +3,7 @@
 set -eu
 
 # positional args
-NAMESPACE=$1
+DOCKER_DIR=$1
 
 readarray -t images < <(docker images | grep cartridge | awk '{print $1 ":" $2}')
 
