@@ -26,13 +26,13 @@ jobs:
         - bashbrew-amd64 build $BIN_DIR/cartridge
         - mkdir -p $DOCKER_DIR
         - docker images
-        - bash docker_save.sh $NAMESPACE $DOCKER_DIR
+        - bash docker_save.sh $DOCKER_DIR
 
     - stage: push
       if: (branch = fix-travis-ci) AND NOT (type = pull_request)
       install:
         - export PATH=$PATH:$BIN_DIR
-        - bash docker_load.sh $NAMESPACE $DOCKER_DIR
+        - bash docker_load.sh $DOCKER_DIR
         - docker images
       script:
         - echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin

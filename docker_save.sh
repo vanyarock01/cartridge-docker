@@ -4,9 +4,8 @@ set -eu
 
 # positional args
 NAMESPACE=$1
-DOCKER_DIR=$2
 
-readarray -t images < <(docker images | grep $NAMESPACE/cartridge | awk '{print $1 ":" $2}')
+readarray -t images < <(docker images | grep cartridge | awk '{print $1 ":" $2}')
 
 for str in "${images[@]}"; do
    # pattern: namespace/repository:tag
