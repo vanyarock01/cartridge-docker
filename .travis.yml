@@ -13,7 +13,6 @@ cache:
   directories:
   - $BIN_DIR
   - $DOCKER_DIR
-  - /var/lib/docker/
 
 jobs:
   include:
@@ -26,6 +25,7 @@ jobs:
         - ./generate-stackbrew-library.sh > $BIN_DIR/cartridge
         - bashbrew-amd64 build $BIN_DIR/cartridge
         - mkdir -p $DOCKER_DIR
+        - docker images
         - bash docker_save.sh $NAMESPACE $DOCKER_DIR
 
     - stage: push
