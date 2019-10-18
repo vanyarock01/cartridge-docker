@@ -4,31 +4,18 @@ dist: xenial
 
 env:
   global:
-    - BIN_DIR=$HOME/bashbrew/.cache/
+    - NAMESPACE=tarantool
 
-cache:
-  directories:
-  - $BIN_DIR
+install:
+  - wget https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
+  - chmod +x bashbrew-amd64
+  - ./generate-stackbrew-library.sh > cartridge
+  - ./bashbrew-amd64 build ./cartridge
 
-jobs:
-  include:
-    - stage: build
-      install:
-        - wget -P $BIN_DIR https://doi-janky.infosiftr.net/job/bashbrew/lastSuccessfulBuild/artifact/bin/bashbrew-amd64
-        - chmod +x $BIN_DIR/bashbrew-amd64
-        - export PATH=$PATH:$BIN_DIR
-      script:
-        - ./generate-stackbrew-library.sh > cartridge
-        - bashbrew-amd64 build ./cartridge
-
-    - stage: push
-      if: (branch = master) AND NOT (type = pull_request)
-      install:
-        - export PATH=$PATH:$BIN_DIR
-      script:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - bashbrew-amd64 tag --target-namespace tarantool ./cartridge
-        - bashbrew-amd64 --namespace tarantool push ./cartridge
-
-
-
+script:
+  - |
+    if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then
+      echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
+      ./bashbrew-amd64 tag --target-namespace $NAMESPACE ./cartridge
+      ./bashbrew-amd64 --namespace $NAMESPACE push ./cartridge
+    fi
