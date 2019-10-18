@@ -15,7 +15,7 @@ install:
 script:
   - |
     if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then
-      echo "$MY_DOCKER_PASSWORD" | docker login --username "$MY_DOCKER_USERNAME" --password-stdin
+      echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
       ./bashbrew-amd64 tag --target-namespace $NAMESPACE ./cartridge
       ./bashbrew-amd64 --namespace $NAMESPACE push ./cartridge
     fi
